@@ -1,11 +1,8 @@
 import csv
 import os
-import re
 import pandas as pd
-import numpy as np
 
-
-path = (os.path.dirname(os.path.realpath(__file__)) + r"/day2_input_test.txt")
+path = (os.path.dirname(os.path.realpath(__file__)) + r"/day_2_input.txt")
 
 with open(path, newline='') as csvfile:
     rowreader = csv.reader(csvfile, delimiter=';')
@@ -19,8 +16,6 @@ with open(path, newline='') as csvfile:
         if game_line.startswith('Game') == True:
             game_num = int(game_line[game_line.index(' ') + 1:game_line.index(':')])
 
-#Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
-
         for turn in row:
             if turn.startswith('Game') == True:
                 rep_turn = str(turn.replace('Game ' + str(game_num) + ':', ''))
@@ -31,29 +26,59 @@ with open(path, newline='') as csvfile:
 
             for block in blocks:
 
+                num_of_blocks = int(block.strip().split()[0])
+                colour_of_blocks = block.strip().split()[1]
+
+                invalid_turn = 0
+
+                if colour_of_blocks == 'red' and num_of_blocks > 12:
+                    invalid_turn = 1
+
+                if colour_of_blocks == 'green' and num_of_blocks > 13:
+                    invalid_turn = 1
+
+                if colour_of_blocks == 'blue' and num_of_blocks > 14:
+                    invalid_turn = 1
+
                 turn_dict = {
                     'game': game_num,
-                    'num_of_blocks': int(block.strip().split()[0]),
-                    'colour_of_blocks': block.strip().split()[1]
+                    'num_of_blocks': num_of_blocks,
+                    'colour_of_blocks': colour_of_blocks,
+                    'invalid_turn': invalid_turn
                 }
 
                 list_of_games.append(turn_dict)
 
     df = pd.DataFrame(list_of_games)
-    game_totals = df.groupby(['game','colour_of_blocks'])['num_of_blocks'].sum()
+    game_totals = df.groupby(['game'], as_index = False)['invalid_turn'].sum()
 
-# The Elf would first like to know which games would 
-# have been possible if the bag contained only
-# 12 red cubes, 13 green cubes, and 14 blue cubes?
+    df2 = game_totals.where(game_totals['invalid_turn'] == 0)
+    df2 = df2.dropna(thresh=1)
 
-    red_total = 12
-    green_total = 13
-    blue_total = 14
+    total = int(df2['game'].sum())
 
-    red_games = game_totals.where(game_totals[2] <= red_total)
+    print(total)
 
 
-    print(df2)
+
+##ignore below
+    #blocks_table = df.pivot_table(['num_of_blocks'], ['game'], 'invalid_turn', fill_value=0, aggfunc='sum')
+
+    #print(blocks_table)
+
+   # red_cond = blocks_table['red'] <= 12
+   # green_cond = blocks_table['green'] <= 13
+   # blue_cond  = blocks_table['blue'] <= 14
+
+   # df2 = blocks_table.where(red_cond & green_cond & blue_cond)
+   # df2 = df2.dropna(thresh=1).reset_index()
+
+   # print(df2)
+
+   # total = df2['game'].sum()
+
+   # print(total)
+
 
 
 
