@@ -51,34 +51,15 @@ with open(path, newline='') as csvfile:
                 list_of_games.append(turn_dict)
 
     df = pd.DataFrame(list_of_games)
-    game_totals = df.groupby(['game'], as_index = False)['invalid_turn'].sum()
+    
+    max_totals = df.groupby(['game', 'colour_of_blocks'], as_index = False)['num_of_blocks'].max()
 
-    df2 = game_totals.where(game_totals['invalid_turn'] == 0)
-    df2 = df2.dropna(thresh=1)
+    blocks_table = max_totals.pivot(values='num_of_blocks',index='game',columns='colour_of_blocks')
+    blocks_table['total'] = blocks_table['red'] * blocks_table['blue'] * blocks_table['green']
 
-    total = int(df2['game'].sum())
+    total = blocks_table['total'].sum()
 
     print(total)
-
-
-
-##ignore below
-    #blocks_table = df.pivot_table(['num_of_blocks'], ['game'], 'invalid_turn', fill_value=0, aggfunc='sum')
-
-    #print(blocks_table)
-
-   # red_cond = blocks_table['red'] <= 12
-   # green_cond = blocks_table['green'] <= 13
-   # blue_cond  = blocks_table['blue'] <= 14
-
-   # df2 = blocks_table.where(red_cond & green_cond & blue_cond)
-   # df2 = df2.dropna(thresh=1).reset_index()
-
-   # print(df2)
-
-   # total = df2['game'].sum()
-
-   # print(total)
 
 
 
