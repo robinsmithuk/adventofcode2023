@@ -21,7 +21,6 @@ with open(path, newline='') as csvfile:
                 rep_turn = str(turn.replace('Game ' + str(game_num) + ':', ''))
             else: 
                 rep_turn = turn
-                rep_turn = turn
 
             blocks = rep_turn.split(', ')
 
