@@ -15,8 +15,6 @@ List<Game> parseLines(string[] lines)
     {
         var game = new Game();
 
-        string s = line.Substring(41).Replace("  ", " ").Trim();
-
         game.CardNumber = int.Parse(line.Substring(6, 2).Trim());
         game.WinningNumbers = line.Substring(9, 30).Replace("  ", " ").Trim().Split(" ").Select(int.Parse).ToList();
         game.LineNumbers = line.Substring(41).Replace("  ", " ").Trim().Split(" ").Select(int.Parse).ToList();
