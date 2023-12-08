@@ -47,7 +47,7 @@ int getTotalScore(List<Game> gamesList)
     return gamesList.Sum(game => game.Score);
 }
 
-var lines = readFile("day5-input.txt");
+var lines = readFile("day4-input.txt");
 var gamesList = parseLines(lines);
 var total = getTotalScore(gamesList);
 
